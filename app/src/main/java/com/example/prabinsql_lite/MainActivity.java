@@ -7,28 +7,37 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    EditText etWord, etMeaning;
-    Button btnSearch;
 
+    private EditText txtaddword, txtaddmeaning;
+    private Button btnAddwords;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        etWord = findViewById(R.id.etWord);
-        etMeaning = findViewById(R.id.etMeaning);
-        btnSearch = findViewById(R.id.btnSearch);
 
-        btnSearch.setOnClickListener(new View.OnClickListener() {
+        txtaddword=findViewById(R.id.txtaddword);
+        txtaddmeaning=findViewById(R.id.txtaddmeaning);
+        btnAddwords=findViewById(R.id.btnaddword);
+
+
+        final MySQLHelper mySQLHelper=new MySQLHelper(MainActivity.this);
+        final SQLiteDatabase sqLiteDatabase = mySQLHelper.getWritableDatabase();
+        btnAddwords.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyHelper myHelper = new MyHelper(MainActivity.this);
 
-                SQLiteDatabase sqLiteDatabase = myHelper.getWritableDatabase();
-
+                long id = mySQLHelper.InsertData(txtaddword.getText().toString(),
+                        txtaddmeaning.getText().toString(), sqLiteDatabase);
+                if(id > 0){
+                    Toast.makeText(MainActivity.this, "Successful", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                }
             }
         });
-
     }
 }
